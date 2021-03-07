@@ -1,7 +1,7 @@
 package edu.iastate.cs311.hw2;
 
 /**
- * @author
+ * @author Nathan Tucker (njtucker@iastate.edu)
  *  A simple priority queue interface and a class template implementing
  *  the interface with a heap and a heap sort algorithm. This code template is
  *  written by Xiaoqiu Huang for Com S 311 in Spring 2021.
@@ -34,7 +34,7 @@ interface ExtendedPriorityQueue<E> {
 
 public class Heap<E extends Comparable<? super E>> implements ExtendedPriorityQueue<E> {
   private static final int INIT_CAP = 10; // A default size of list
-  private ArrayList<E> list; // used as an array to keep the elements in the heap
+  private final ArrayList<E> list; // used as an array to keep the elements in the heap
   // list.size() returns the number of elements in the list,
   // which is also the size of the heap.
   // For 0 <= k < list.size(), list.get(k) returns the element at position k of list
@@ -81,13 +81,13 @@ public class Heap<E extends Comparable<? super E>> implements ExtendedPriorityQu
   // O(log n)
   // Moves the last element up to the proper place so that the heap property holds.
   private void percolateUp() {
-    int currentIndex = list.size() - 1;
-    int parentIndex = (currentIndex) >>> 1;
+    int childIndex = list.size() - 1;
+    int parentIndex = (list.size() - 2) / 2;
 
-    while (list.get(currentIndex).compareTo(list.get(parentIndex)) < 0){
-      swap(currentIndex, parentIndex);
-      currentIndex = parentIndex;
-      parentIndex = (currentIndex >>> 1);
+    while (list.get(childIndex).compareTo(list.get(parentIndex)) < 0) {
+      swap(parentIndex, childIndex);
+      childIndex = parentIndex;
+      parentIndex = (parentIndex - 1) / 2;
     }
   }
 
@@ -108,7 +108,9 @@ public class Heap<E extends Comparable<? super E>> implements ExtendedPriorityQu
   // If the size of the heap is less than 2, it throws new NoSuchElementException().
   public E getLastInternal() {
     if (list.size() < 2) throw new NoSuchElementException();
-    return list.get((list.size() - 1) >>> 1);
+
+    /// list size minus 2, then divide by 2 (by doing a much faster bitshift)
+    return list.get((list.size() - 2) >>> 1);
   }
 
   public E removeMin() {
@@ -126,7 +128,8 @@ public class Heap<E extends Comparable<? super E>> implements ExtendedPriorityQu
   public void trimEveryLeaf() {
     if (list.size() < 2) throw new NoSuchElementException();
 
-    list.subList(list.size() >>> 1, list.size() - 1).clear();
+    // eqn for lastInternal, just add 1 to get the first leaf
+    list.subList(((list.size() - 2 ) / 2) + 1, list.size()).clear();
   }
 
   // O(log n)
@@ -134,30 +137,19 @@ public class Heap<E extends Comparable<? super E>> implements ExtendedPriorityQu
   private void percolateDown(int start) {
     if (start < 0 || start >= list.size()) throw new RuntimeException("start < 0 or >= n");
 
-    E leftChild = list.get(start << 1);
-    E rightChild = list.get((start << 1) + 1);
-    E current = list.get(start);
+    int leftChild = (start * 2) + 1;
+    int rightChild = (start * 2) + 2;
 
-    int leftChildIndex = start << 1;
-    int rightChildIndex = (start << 1) + 1;
-
-    if (start == 0) {
-      leftChild = list.get(1);
-      rightChild = list.get(2);
-      leftChildIndex = 1;
-      rightChildIndex = 2;
+    // if larger than left
+    if (leftChild < list.size() && list.get(start).compareTo(list.get(leftChild)) > 0) {
+      swap(start, leftChild);
+      percolateDown(leftChild);
     }
 
-    if (!isLeaf(start)) {
-      if (current.compareTo(leftChild) > 0 || current.compareTo(rightChild) > 0) {
-        if (current.compareTo(leftChild) > 0) {
-          swap(start, leftChildIndex);
-          percolateDown(leftChildIndex);
-        } else {
-          swap(start, rightChildIndex);
-          percolateDown(rightChildIndex);
-        }
-      }
+    // if larger than right
+    if (rightChild < list.size() && list.get(start).compareTo(list.get(rightChild)) > 0) {
+      swap(start, rightChild);
+      percolateDown(rightChild);
     }
   }
 
@@ -189,9 +181,5 @@ public class Heap<E extends Comparable<? super E>> implements ExtendedPriorityQu
     while (!aHeap.isEmpty()) {
       aList.add(aHeap.removeMin());
     }
-  }
-
-  private boolean isLeaf(int index) {
-    return index >= (list.size() >>> 1) && index <= list.size();
   }
 }

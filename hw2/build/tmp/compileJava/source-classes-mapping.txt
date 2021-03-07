@@ -1,5 +1,0 @@
-edu/iastate/cs311/hw2/Application.java
- edu.iastate.cs311.hw2.Application
-edu/iastate/cs311/hw2/Heap.java
- edu.iastate.cs311.hw2.ExtendedPriorityQueue
- edu.iastate.cs311.hw2.Heap
