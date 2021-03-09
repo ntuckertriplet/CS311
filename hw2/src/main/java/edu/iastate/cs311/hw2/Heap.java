@@ -94,7 +94,7 @@ public class Heap<E extends Comparable<? super E>> implements ExtendedPriorityQu
   // Swaps the elements at the parent and child indexes.
   private void swap(int parent, int child) {
     E tmp = list.get(parent);
-    list.set( parent, list.get(child) );
+    list.set(parent, list.get(child));
     list.set(child, tmp);
   }
 
@@ -109,8 +109,7 @@ public class Heap<E extends Comparable<? super E>> implements ExtendedPriorityQu
   public E getLastInternal() {
     if (list.size() < 2) throw new NoSuchElementException();
 
-    /// list size minus 2, then divide by 2 (by doing a much faster bitshift)
-    return list.get((list.size() - 2) >>> 1);
+    return list.get((list.size() - 2) / 2);
   }
 
   public E removeMin() {

@@ -1,0 +1,182 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amsthm,amssymb,amsfonts,epic,epsfig,latexsym,enumerate}
+\usepackage{enumitem}
+\usepackage[titlenotnumbered,linesnumbered,noend,plain]{algorithm2e}
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{setspace}
+\usepackage{mathtools}
+\usepackage{qtree}
+\thispagestyle{empty}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\newtheorem{lemma}{Lemma}
+\usepackage{url}
+
+\SetKwProg{Fn}{}{}{}
+
+\begin{document}
+
+
+
+%\thispagestyle{empty}
+
+%\hspace{0.11cm} \vspace{2cm}
+
+\title{Com S 311 Exam 1}
+\author{Nathan Tucker (njtucker@iastate.edu)}
+\maketitle
+
+\doublespacing
+
+\vspace{10mm}
+
+\vfill
+\begin{flushright}
+This assignment represents my own work in accordance with University regulations.
+
+- Nathan Tucker
+\end{flushright}
+
+\newpage
+
+\section*{Problems}
+
+\begin{enumerate}
+
+\item Prove or disprove the following statements \textbf{(20 points)}.
+\begin{enumerate}
+	\begin{doublespace}
+		\item $4\sqrt{n} = O(n)$ \\
+		By the limit definition of big O, we can say that g(n) is an upper asymptotic bound if $\lim_{n\to\infty} \frac{f(n)}{g(n)} = 0$.\\
+		\begin{center}
+			$\lim_{n\to\infty} \frac{4\sqrt{n}}{n} = 0$
+		\end{center}
+		Because we know that $\lim_{n\to\infty} \frac{4\sqrt{n}}{n}$ goes to 0, we can say that O(n) is an upper asymptotic bound for $4\sqrt{n}$, or $4\sqrt{n} = O(n)$.
+		\item $n = O(4\sqrt{n})$.
+	\end{doublespace}
+	By the limit definition of big O, we can say that g(n) is an upper asymptotic bound if $\lim_{n\to\infty} \frac{f(n)}{g(n)} = 0$.\\
+	\begin{center}
+		$\lim_{n\to\infty} \frac{n}{4\sqrt{n}} = \infty$
+	\end{center}
+	Because we know that $\lim_{n\to\infty} \frac{n}{4\sqrt{n}}$ goes to $\infty$, we can say that $4\sqrt{n}$ is not an upper asymptotic bound for n. Disproven.
+\end{enumerate}
+
+\newpage
+
+\item Formally analyze the runtime of the following algorithm. Give the runtime in big oh notation. You must show your work. \textbf{(20 points)}
+
+\smallskip
+
+\begin{algorithm}[H]
+\Fn(){Alg1(A)}{
+\KwIn{Array of integers of length $n$}
+\SetAlgoLined
+\SetNoFillComment
+\DontPrintSemicolon
+	constant number of operations \\
+	\For{$i = n$, $i \geq 1$, $i= i /2$}{
+		
+		\For{$j = 1$, $j \leq n$, $j = j+1$}{
+			constant number of operations
+		}
+	}
+}
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\Fn(){Runtime of each line}{
+	\SetAlgoLined
+	\SetNoFillComment
+	\DontPrintSemicolon
+		c\\
+		logarithmic, potentially log(n) (+ 1 for the final comparison to exit loop)\\
+		n + 1\\
+		c * n\\
+	}
+\end{algorithm}
+
+\bigskip
+The outermost term is log (n), as we are dividing i by 2 each iteration. The next loop is a simple from 1 to n, incrementing by 1, meaning depending on n items (+ 1 for a check that will exit the loop). Then it's a constant number of operations times n, the outer loop. Combined together, we can say that the total runtime of t\\
+\begin{center}
+	$log(n * [(n * c) + 1]) + 1 + c$
+\end{center}
+As the largest leading term in the above runtime is $log(n^2)$ we can say that the big O of the algorithm is $log(n^2)$
+
+\newpage
+
+\item We are given an array $A$ of integers which is \textit{strictly increasing}, i.e., $A[i] < A[i+1]$. Give a divide-and-conquer algorithm which outputs an index $i$ such that $A[i] = i$, if one exists. If no such index exists, the algorithm outputs null. Formally analyze the runtime of your algorithm, giving a recurrence relation and a big oh bound on the runtime of your algorithm. You \textbf{must} use a divide and conquer strategy. You do not have to prove correctness. \textbf{(30 points)}
+\begin{algorithm}[H]
+	\Fn(){IndexEqualtoValue(A, start, end)}{
+	\KwIn{Array of integers of length $n$, the left most index, the right most index}
+	\SetAlgoLined
+	\SetNoFillComment
+	\DontPrintSemicolon
+		\If{end $>=$ start}{
+			middle = $\floor{\frac{low + high}{2}}$\\
+			\If{middle == A[middle]} {
+				return middle
+			}
+			\If{middle $>$ A[middle]} {
+				return IndexEqualtoValue(A, middle + 1, end)
+			}
+			\If{middle $<$ A[middle]} {
+				return IndexEqualtoValue(A, start, middle)
+			}
+		}
+		
+		return "null"
+	}
+\end{algorithm}
+\bigskip
+To formlly analyze the runtime of the algorithm, we can see that we are doing a search in a list. This is not a linear search however, as we first search over half the list, then, if we do not find the desired value, we search over half of that half, or $\frac{1}{4}$. Eventually we will get an array length of $\frac{n}{2^k}$ over k iterations. Additionally, we know that, after k iterations, we will end up with an array size of 1. Therefore we can say that the length of the array is $1 = \frac{n}{2^k}$ or, rearranging, $n = 2^k$. Applying log to both sides yields $log_2{n} = k * log_2{2}$, or $k = log_2{n}$. Making the big O $= O(log(n))$ Because of this too, we can say that the recurrence relation of this search is\\
+\begin{center}
+	$T(n) = T(\frac{n}{2}) + 1$
+\end{center}
+\newpage
+
+\item Using the Master Theorem, bound the runtime $T(n)$ of the following recurrence. 
+\begin{center}
+$T(n) = 2T(n/4) + 16\sqrt{n} + 1$, where $T(1) = O(1)$.
+\end{center}
+You must state which case of the Master Theorem holds, and prove that it does apply. \textbf{(20 points)} \\
+\begin{doublespace}
+	$a = 2$, $b = 4$, $f(n) = \sqrt{n}$\\
+	$log_4{2} = .5$, which yields a c value of .5\\
+	Therefore, case 2 of the Master Theorem applies here, of $f(n) = \Omega(n^{log_b{a}} * log(n))$\\
+	Proof:\\
+	We see that $a = 2$, $b = 4$, and $f(n)=16\sqrt{n}$\\
+	$log_4{2} = .5 = \frac{1}{2}$, then\\
+	$n^{log_4{2}} * log(n) \leq n^{\frac{1}{2}} * log(n)$\\
+	$\therefore n^{\frac{1}{2}} \leq\Omega(n^{\frac{1}{2}} * log(n))$\\
+	$a * f(\frac{n}{b}) \leq c * f(n)$, let c = 1\\
+	$2f(\frac{n}{4})\leq c * n^{\frac{1}{2}}$\\
+	$\leq 2 * \frac{n}{4}^\frac{1}{2}$\\
+	$\leq n^\frac{1}{2}$\\
+	$\leq c * f(n)$\\
+	Therefore, we can apply case 2 of the Master Theorem, and so,\\
+	\begin{center}
+		$T(n) = \theta(n)$
+	\end{center}
+\end{doublespace}
+
+\newpage
+
+\item Recall that a \textit{leaf node} of a heap is a node which does not have any children. An \textit{internal node} is a node which is not a leaf, i.e., a node which has at least one child. Prove that the number of leaves in an $n$-element max-heap is $\lceil n / 2 \rceil$. \textbf{(10 points)}
+
+\smallskip
+
+\textit{Hint: } Remember that every heap has an associated array with $n$ elements, starting with index $1$, such that, for every $i \in \{1,\ldots,n\}$,
+\begin{center}
+Parent$(i) = \lfloor i / 2 \rfloor$, Left$(i) = 2i$, and Right$(i) = 2i+1$.
+\end{center}
+To get started on the problem, consider $2i$ and $2i+1$ when $i > \lfloor n / 2 \rfloor$ and when $i \leq \lfloor n / 2 \rfloor$.\par
+\bigskip
+Let's assume we have a perfect tree of depth k. This tree will have $2^{k+1} - 1$ nodes. We can also say that, up to level $k - 1$, the tree is perfect and has $2^k-1$ nodes. Additionally, we can also say that, at the last level containing only leaves, there are $n - 2^k + 1$ nodes. Finally, we can say that each leaf on the last level will have a parent node. A pair of nodes will also share the same parent, and every node will share a parent with another node. Finally, out of the $2^k-1$ nodes at level $k - 1$, there are $\ceil{\frac{n - 2^k+1}{2}}$ parents and the rest are leaves, or $2^{k-1}-\ceil{\frac{n-2^k+1}{2}}$.\par
+Therefore, we can say that the total amount of leaves is $n - 2^k+1+2^{k-1}-\ceil{\frac{n-2^k+1}{2}}$ or, simplified, $\ceil{\frac{n}{2}}$
+
+\end{enumerate}
+
+
+\end{document}
