@@ -138,10 +138,11 @@ Prove that $P$ is closed under the star operation by dynamic programming.\\
 Consider the language $L \in P$. The following procedure decides $L$*.\\
 \begin{algorithm}[H]
     \Fn(){L*}{
-    \KwIn{$M = $ On input, assume $y = y_1, y_2,...y_n \in \sum$}
+    \KwIn{y}
     \SetAlgoLined
     \SetNoFillComment
     \DontPrintSemicolon
+        $M = $ On input, assume $y = y_1, y_2,...y_n \in \sum$\\
         \If{$y = \epsilon$} {
             return true
         }
