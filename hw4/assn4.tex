@@ -130,7 +130,7 @@ $$
     }
     \end{algorithm}
 \bigskip
-\hspace*{15mm}This algorithm will compute the weight as well as the path of the greatest weight path of the weight matrix. It will search the neighbors of the current cell and find the largest of the neighbors and store the value in the matrix $T$. It pre-computes the possible paths to take (in case the greatest path is not the path to be taken by the greatest adjacent neighbor).
+\hspace*{15mm}This algorithm will compute the weight as well as the path of the greatest weight path of the weight matrix. It will search the neighbors of the current cell and find the largest of the neighbors and store the value in the matrix $T$. It pre-computes the possible paths to take (in case the greatest path is not the path to be taken by the greatest adjacent neighbor). This is done over each index of an $n$ by $m$ matrix, making it an $O(n*m)$ runtime algorithm, and outputting the path in that same runtime.
 \newpage
 
 \section*{Problem 2}
