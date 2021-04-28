@@ -82,9 +82,9 @@ Array A: 10 30 20 50 70 55 65 25 45 85 15 90 75 60 35 80 95 40
 
 Index  :  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18
 
-Array B: 10 20 65 60 40
+Array B: 45 50 30 10
 
-Index  :  1  2  3  4  5
+Index  :  1  2  3  4
 \end{verbatim}
 \newpage
 \subsection*{Algorithm (35 points)}
@@ -98,20 +98,26 @@ its running time.\\
     \SetAlgoLined
     \SetNoFillComment
     \DontPrintSemicolon
-        Let $B$ be a new array of length $h$, where $h$ is the height of the BST represented by $A$\\
-        Let $i$ be 1, let $k$ be 1\\
-        \While{$i \leq A.size$}{
-            B[$k$] = A[$i$]\\
-            $i = 2i + 1$\\
-            $k = k + 1$
+        \CommentSty{This would technically be a complete tree, but add check if A size is 1}\\
+        \If{A.size == 1}{return}
+        $height$ = 0\\
+        $curNode$ = A[A.$size$]\\
+        \While{curNode $\geq$ 1}{
+            $height = height + 1$\\
+            $curNode = \floor{\frac{curNode}{2}}$
         }
-        \CommentSty{We've maybe missed the last node in the BST because we've gone "out of bounds" trying to find only right children, need to add if not full and complete BST}\\
-        \If{$\floor{\frac{i}{2}} = A.size$}{
-            B[$k + 1$] = A[$A.size$]
+        Let B be a new array of size $height$\\
+        $curNode$ = A[A.$size$]\\
+        \For{k from 0 to height}{
+            \CommentSty{Add the parent of the current node}\\
+            B.add(A[$\floor{\frac{curNode}{2}}$])\\
+            $curNode = \floor{\frac{curNode}{2}}$
         }
+        return B
     }
     \end{algorithm}
 \bigskip
-For this algorithm, it really just boils down to finding one of two things: the right child of the current node or, if one does not exist, the last node in the BST array. The only instance in which this fails is in the case of a full and complete BST, because the last node in the array \emph{will} be the last node we're looking for.\\
-We start at the first index of the array A and will search for the right children only, so rather than a linear search of the array, we are looking for right children only. To accomplish this, we increment $i$ by $2i + 1$ rather than just by $i + 1$ in the case of a linear search. Because of this method of tree traversal, the runtime of the algorithm is $log(n) + 1$ because of the $log(n)$ traversal and the final constant time check of the size, and an $O(1)$ array access. All of this leads to a runtime of $log(n) + 1$, or a big O of $O(\log n)$
+For this algorithm, we can exploit a property of Parent Array representations of Binary Search Trees to get the height and the last index of the height very easily. First, to find the height, we can start at the last node in the array, as we know it will be a leaf at the greatest depth possible for this nearly-complete tree. Then we can keep finding the parent until we reach the root node, then we have the total height. Because we are calculating the height by going in increments of $\floor{\frac{i}{2}}$ each iteration we know we have a runtime of $\log n$.\\
+Now that we know the height, we can declare a new array B with the length of the height we just found. Once we've done that, it's as easy as following the exact same path to the root node of the BST to get the nodes at the greatest index of each height. This follows the exact same path to find the height, so for the same reason, we can say we have a runtime of $\log n$ for this search and addition to B.\\
+Now with both of those runtimes, we can sum them together to have a total runtime of $2 \log n$ or a big O of $O(\log n)$.
 \end{document}
